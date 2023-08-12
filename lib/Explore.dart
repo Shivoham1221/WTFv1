@@ -12,25 +12,6 @@ class ExploreScreen extends StatefulWidget {
 
 class _ExploreScreenState extends State<ExploreScreen> {
   int _currentIndex = 0;
-  void signupUser() async {
-    try{
-      UserCredential userCredential=await FirebaseAuth.instance.createUserWithEmailAndPassword(email: "h562002@gmail.com", password: "password");
-      print(userCredential);
-      //String? id = FirebaseAuth.instance.currentUser?.uid;
-      // UserModel userModel=UserModel(id:id,firstName: firstname, lastName: lastname, email: email, password: password);
-      // db.collection("doctor").doc(password).set(userModel.toJson());
-    } on FirebaseAuthException catch (e){
-      if(e.code=='email-already-in-use'){
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Email already in use.")));
-
-      }
-      else{
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(""+e.message.toString())));
-
-      }
-    }
-
-  }
 
   final List<String> options = ['Opt 1', 'Opt 2', 'Opt 3', 'Opt 4']; // Shorter option texts
 
