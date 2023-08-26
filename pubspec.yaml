@@ -44,6 +44,9 @@ dependencies:
   uuid: ^3.0.5
   velocity_x: ^4.0.0
   get: ^4.3.8
+  random_string: ^2.0.1
+
+
 
 
 

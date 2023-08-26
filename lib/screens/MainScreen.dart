@@ -6,12 +6,14 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:velocity_x/velocity_x.dart';
 import 'package:wtf01/Explore.dart';
-import 'package:wtf01/HomeScreen.dart';
+import 'package:wtf01/HomeScreen1.dart';
 import 'package:wtf01/Message.dart';
 import 'package:wtf01/Notification.dart';
 import 'package:wtf01/Profile.dart';
 import 'package:wtf01/screens/search_screen.dart';
 
+import '../chat/group_chats/create_group/add_members.dart';
+import '../chat/group_chats/group_chat_screen.dart';
 import '../controllers/home_controller.dart';
 
 
@@ -29,11 +31,9 @@ class MainScreen extends StatelessWidget {
       BottomNavigationBarItem(icon: Image.asset('assets/icons/explore.png',width: 40,height: 40),label: 'Explore'),
       BottomNavigationBarItem(icon: Icon(Icons.notifications_none_rounded),label: "Profile"),
       BottomNavigationBarItem(icon: Icon(Icons.person_2_outlined),label: "Profile"),
-
-
     ];
     var navBody=[
-      const HomeScreen(),const SearchScreen(),const ExploreScreen(),NotificationPage(),ProfileScreen(uid:FirebaseAuth.instance.currentUser!.uid)
+      const HomeScreen1(),MessageScreen(), AddMembersInGroup(),NotificationPage(),ProfileScreen(uid:FirebaseAuth.instance.currentUser!.uid)
 
     ];
     return Scaffold(

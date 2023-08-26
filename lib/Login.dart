@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:wtf01/HomeScreen.dart';
+import 'package:wtf01/HomeScreen1.dart';
+import 'package:wtf01/chat/Screens/HomeScreen.dart';
 import 'package:wtf01/resources/auth_methods.dart';
 import 'package:wtf01/screens/MainScreen.dart';
 import 'package:wtf01/utils/utils.dart';

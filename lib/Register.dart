@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:wtf01/EmailVerification.dart';
 import 'package:wtf01/Login.dart';
 import 'package:wtf01/resources/auth_methods.dart';
 import 'package:wtf01/screens/MainScreen.dart';
@@ -56,7 +57,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       if (context.mounted) {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
-            builder: (context) => const MainScreen()
+            builder: (context) => const EmailVerificationScreen()
           ),
         );
       }
