@@ -39,6 +39,12 @@ class AuthMethods {
           email: email,
           password: password,
         );
+        _firestore
+            .collection('users')
+            .doc(_auth.currentUser!.uid)
+            .get()
+            .then((value) => cred.user!.updateDisplayName(value['name']));
+
 
         // String photoUrl =
         //     await StorageMethods().uploadImageToStorage('profilePics', file, false);
@@ -46,7 +52,7 @@ class AuthMethods {
         model.User user = model.User(
           username: username,
           uid: cred.user!.uid,
-          photoUrl: "photoUrl",
+          photoUrl: "",
           email: email,
           bio: bio,
           followers: [],
@@ -61,6 +67,8 @@ class AuthMethods {
             .set(user.toJson());
 
         res = "success";
+
+
       } else {
         res = "Please enter all the fields";
       }
@@ -79,10 +87,16 @@ class AuthMethods {
     try {
       if (email.isNotEmpty || password.isNotEmpty) {
         // logging in user with email and password
-        await _auth.signInWithEmailAndPassword(
+        UserCredential userCredential=await _auth.signInWithEmailAndPassword(
           email: email,
           password: password,
         );
+        _firestore
+            .collection('users')
+            .doc(_auth.currentUser!.uid)
+            .get()
+            .then((value) => userCredential.user!.updateDisplayName(value['name']));
+        await _auth.currentUser?.emailVerified;
         res = "success";
       } else {
         res = "Please enter all the fields";
@@ -96,4 +110,23 @@ class AuthMethods {
   Future<void> signOut() async {
     await _auth.signOut();
   }
+
+  Future<void> uploadProfile(Uint8List file)async{
+    String res="Some error occured";
+    String photoUrl =
+    await StorageMethods().uploadImageToStorage('profilePics', file, false);
+    await _firestore
+        .collection("users")
+        .doc(_auth.currentUser!.uid)
+        .update({"photoUrl":'${photoUrl}'})
+        .then((_) {
+      print('Username updated successfully');
+      res='Successfully Updated';
+    })
+        .catchError((error) {
+      print('Error updating username: $error');
+    });
+
+  }
+
 }

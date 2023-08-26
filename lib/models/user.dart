@@ -44,6 +44,7 @@ class User {
         "bio": bio,
         "followers": followers,
         "following": following,
-        "name":name
+        "name":name,
+    "status":"unavailable"
       };
 }

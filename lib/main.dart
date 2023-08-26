@@ -1,11 +1,12 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:wtf01/Autheticate.dart';
 import 'package:wtf01/Explore.dart';
 import 'package:wtf01/Notification.dart';
 import 'package:wtf01/Profile.dart';
 import 'package:wtf01/screens/MainScreen.dart';
 import 'dart:async';
-import 'HomeScreen.dart';
+import 'HomeScreen1.dart';
 import 'Login.dart';
 import 'Register.dart';
 import 'Message.dart';
@@ -31,7 +32,7 @@ class MyApp extends StatelessWidget {
         fontFamily: 'Mulish_Regular',
         primarySwatch: Colors.blue,
       ),
-      home: RegisterScreen(),
+      home: SplashScreen(),
 
     );
   }
@@ -50,7 +51,7 @@ class _SplashScreenState extends State<SplashScreen> {
     Timer(const Duration(seconds: 1), () {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) =>  ExploreScreen()),
+        MaterialPageRoute(builder: (context) =>  Authenticate()),
 
       );
     });
