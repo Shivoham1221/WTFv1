@@ -1,12 +1,12 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:wtf01/Autheticate.dart';
 import 'package:wtf01/Explore.dart';
 import 'package:wtf01/Notification.dart';
 import 'package:wtf01/Profile.dart';
 import 'package:wtf01/screens/MainScreen.dart';
+import 'package:wtf01/screens/SplashScreen.dart';
 import 'dart:async';
-import 'HomeScreen1.dart';
+import 'HomeScreen.dart';
 import 'Login.dart';
 import 'Register.dart';
 import 'Message.dart';
@@ -32,65 +32,8 @@ class MyApp extends StatelessWidget {
         fontFamily: 'Mulish_Regular',
         primarySwatch: Colors.blue,
       ),
-      home: SplashScreen(),
-
+      home: SplashScreen(), 
     );
   }
 }
-class SplashScreen extends StatefulWidget {
-  const SplashScreen({Key? key});
 
-  @override
-  _SplashScreenState createState() => _SplashScreenState();
-}
-
-class _SplashScreenState extends State<SplashScreen> {
-  @override
-  void initState() {
-    super.initState();
-    Timer(const Duration(seconds: 1), () {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) =>  Authenticate()),
-
-      );
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        color: Color(0xfff2f1ec),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Center(
-              child: const Text(
-                'WTF',
-                style: TextStyle(
-                  fontSize: 102,
-                  color: Color(0xff1AC3A9),
-                  fontFamily: 'WaterLily',
-                  fontWeight: FontWeight.bold,
-                ),
-
-              ),
-            ),
-            Center(
-              child: const Text(
-                'Wandering Thoughts forge',
-                style: TextStyle(
-                  fontSize: 25,
-                  color: Color(0xff1AC3A9),
-                  fontFamily: 'WaterLily',
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
