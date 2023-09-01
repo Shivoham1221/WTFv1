@@ -17,6 +17,7 @@ class DirectChatRoom extends StatefulWidget {
 
 class _DirectChatRoomState extends State<DirectChatRoom> {
   final TextEditingController _message = TextEditingController();
+  ScrollController scrollController=ScrollController();
   String url='';
 
 
@@ -120,6 +121,7 @@ class _DirectChatRoomState extends State<DirectChatRoom> {
   void onSendMessage() async {
     addtoUser();
     if (_message.text.isNotEmpty) {
+      scrollController.animateTo(scrollController.position.maxScrollExtent, duration: Duration(milliseconds: 300), curve: Curves.easeOut);
       Map<String, dynamic> messages = {
         "sendby": _auth.currentUser!.displayName,
         "message": _message.text,
@@ -185,8 +187,12 @@ class _DirectChatRoomState extends State<DirectChatRoom> {
                     AsyncSnapshot<QuerySnapshot> snapshot) {
                   if (snapshot.data != null) {
                     return ListView.builder(
-                      itemCount: snapshot.data!.docs.length,
+                      controller: scrollController,
+                      itemCount: snapshot.data!.docs.length+1,
                       itemBuilder: (context, index) {
+                        if(index==snapshot.data!.docs.length){
+                          return Container(height: 50,);
+                        }
                         Map<String, dynamic> map = snapshot.data!.docs[index]
                             .data() as Map<String, dynamic>;
                         return messages(size, map, context);
