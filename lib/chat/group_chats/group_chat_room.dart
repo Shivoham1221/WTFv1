@@ -11,11 +11,14 @@ class GroupChatRoom extends StatelessWidget {
       : super(key: key);
 
   final TextEditingController _message = TextEditingController();
+  ScrollController scrollController=ScrollController();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   void onSendMessage() async {
     if (_message.text.isNotEmpty) {
+      scrollController.animateTo(scrollController.position.maxScrollExtent, duration: Duration(milliseconds: 300), curve: Curves.easeOut);
+
       Map<String, dynamic> chatData = {
         "sendBy": _auth.currentUser!.displayName,
         "message": _message.text,
@@ -69,8 +72,12 @@ class GroupChatRoom extends StatelessWidget {
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     return ListView.builder(
-                      itemCount: snapshot.data!.docs.length,
+                      controller: scrollController,
+                      itemCount: snapshot.data!.docs.length+1,
                       itemBuilder: (context, index) {
+                        if(index==snapshot.data!.docs.length){
+                          return Container(height: 70,);
+                        }
                         Map<String, dynamic> chatMap =
                             snapshot.data!.docs[index].data()
                                 as Map<String, dynamic>;
