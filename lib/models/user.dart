@@ -8,6 +8,7 @@ class User {
   final String bio;
   final List followers;
   final List following;
+  final List requests;
   final String name;
 
   const User(
@@ -17,8 +18,10 @@ class User {
       required this.email,
       required this.bio,
       required this.followers,
+        required this.requests,
       required this.following
       ,required this.name
+
       });
 
   static User fromSnap(DocumentSnapshot snap) {
@@ -30,6 +33,7 @@ class User {
       email: snapshot["email"],
       photoUrl: snapshot["photoUrl"],
       bio: snapshot["bio"],
+      requests: snapshot["requests"],
       followers: snapshot["followers"],
       following: snapshot["following"],
       name: snapshot["name"]
@@ -44,6 +48,7 @@ class User {
         "bio": bio,
         "followers": followers,
         "following": following,
+    "requests":requests,
         "name":name,
     "status":"unavailable"
       };
