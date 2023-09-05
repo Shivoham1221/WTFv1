@@ -55,6 +55,7 @@ class AuthMethods {
           photoUrl: "",
           email: email,
           bio: bio,
+          requests: [],
           followers: [],
           following: [],
           name: name

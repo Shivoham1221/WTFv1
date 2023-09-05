@@ -25,8 +25,7 @@ import 'custom_widgets/CustomButton.dart';
 
 class ProfileScreen extends StatefulWidget {
   final String uid;
-  const ProfileScreen({Key? key ,required this.uid}) : super(key: key);
-
+  const ProfileScreen({Key? key, required this.uid}) : super(key: key);
 
   @override
   _ProfileScreenState createState() => _ProfileScreenState();
@@ -38,29 +37,34 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Uint8List? _image;
   int _currentIndex = 0;
   var userData = {};
+  var myData={};
   int postLen = 0;
   int followers = 0;
+  int requests = 0;
   int following = 0;
+  bool isInMyRequests=false;
+  bool isIFollow=false;
+  bool isRequested = false;
   bool isFollowing = false;
   bool isLoading = false;
-  String profileImage='';
-
+  String profileImage = '';
 
   String chatRoomId(String user1, String user2) {
     if (user1[0].toLowerCase().codeUnits[0] >
         user2.toLowerCase().codeUnits[0]) {
-      return "${user1[0].toLowerCase().codeUnits[0]}${ user2.toLowerCase().codeUnits[0]}";
+      return "${user1[0].toLowerCase().codeUnits[0]}${user2.toLowerCase().codeUnits[0]}";
     } else {
       return "${user2.toLowerCase().codeUnits[0]}${user1[0].toLowerCase().codeUnits[0]}";
     }
   }
 
-  void startChat(){
+  void startChat() {
     {
-      print(_auth.currentUser!.displayName!.isEmpty?"true":"false"+" // "+userMap!['name']);
-      String roomId = chatRoomId(
-          _auth.currentUser!.displayName!,
-          userMap!['name']);
+      print(_auth.currentUser!.displayName!.isEmpty
+          ? "true"
+          : "false" + " // " + userMap!['name']);
+      String roomId =
+          chatRoomId(_auth.currentUser!.displayName!, userMap!['name']);
       Navigator.of(context).push(
         MaterialPageRoute(
           builder: (_) => ChatRoom(
@@ -86,8 +90,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
       var userSnap = await FirebaseFirestore.instance
           .collection('users')
           .doc(widget.uid)
-          .get()
-          ;
+          .get();
+      var mySnap = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .get();
 
       await FirebaseFirestore.instance
           .collection('users')
@@ -102,21 +109,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
         print(userMap);
       });
 
-      // get post lENGTH
-      var postSnap = await FirebaseFirestore.instance
-          .collection('posts')
-          .where('uid', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
-          .get();
-
-      postLen = postSnap.docs.length;
       userData = userSnap.data()!;
-      print(userData );
-      print("Data");
+      myData=mySnap.data()!;
+      print(userData);
+      print(myData);
+      isInMyRequests=mySnap.data()!['requests']
+                          .contains(widget.uid);
+      isIFollow=mySnap.data()!['following']
+          .contains(widget.uid);
+      print(mySnap.data()!['following'].toString()+"  "+widget.uid);
+      print(isIFollow);
       followers = userSnap.data()!['followers'].length;
+      print("followers${followers}");
       following = userSnap.data()!['following'].length;
-      profileImage=userSnap.data()!['photoUrl'];
+      print("following${following}");
+      profileImage = userSnap.data()!['photoUrl'];
+      isRequested = userSnap
+          .data()!['requests']
+          .contains(FirebaseAuth.instance.currentUser!.uid);
+
       isFollowing = userSnap
-          .data()!['followers']
+          .data()!['following']
           .contains(FirebaseAuth.instance.currentUser!.uid);
       setState(() {});
     } catch (e) {
@@ -130,22 +143,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
     });
   }
 
-  uploadImage() async{
-    String photoUrl =
-    await StorageMethods().uploadImageToStorage('profilePics', _image!, false);
+  uploadImage() async {
+    String photoUrl = await StorageMethods()
+        .uploadImageToStorage('profilePics', _image!, false);
     await FirebaseFirestore.instance
         .collection("users")
         .doc(_auth.currentUser!.uid)
-        .update({"photoUrl":'${photoUrl}'})
-        .then((_) {
+        .update({"photoUrl": '${photoUrl}'}).then((_) {
       print('Username updated successfully');
-
-    })
-        .catchError((error) {
+    }).catchError((error) {
       print('Error updating username: $error');
     });
     setState(() {
-      profileImage=photoUrl;
+      profileImage = photoUrl;
     });
   }
 
@@ -159,10 +169,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     });
   }
 
-
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -184,23 +192,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           children: [
                             !userData['photoUrl'].toString().isEmpty
                                 ? CircleAvatar(
-                              radius: 64,
-                              backgroundImage: NetworkImage(profileImage),
-                            )
+                                    radius: 64,
+                                    backgroundImage: NetworkImage(profileImage),
+                                  )
                                 : const CircleAvatar(
-                              radius: 64,
-                              backgroundImage: NetworkImage(
-                                  'https://i.stack.imgur.com/l60Hf.png'),
-                            ),
-                            FirebaseAuth.instance.currentUser!.uid == widget.uid?
-                            Positioned(
-                              bottom: -10,
-                              left: 80,
-                              child: IconButton(
-                                onPressed: selectImage,
-                                icon: const Icon(Icons.add_a_photo),
-                              ),
-                            ):Container()
+                                    radius: 64,
+                                    backgroundImage: NetworkImage(
+                                        'https://i.stack.imgur.com/l60Hf.png'),
+                                  ),
+                            FirebaseAuth.instance.currentUser!.uid == widget.uid
+                                ? Positioned(
+                                    bottom: -10,
+                                    left: 80,
+                                    child: IconButton(
+                                      onPressed: selectImage,
+                                      icon: const Icon(Icons.add_a_photo),
+                                    ),
+                                  )
+                                : Container()
                           ],
                         ),
                         SizedBox(width: 16),
@@ -211,14 +220,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 Text(
-                                  '${followers}', // Replace with the actual number of followers
-                                    style: TextStyle(fontSize: 58,fontFamily: 'WaterLily',color: Color(0xFF365B6D)) //,
-                                ),
+                                    '${followers}', // Replace with the actual number of followers
+                                    style: TextStyle(
+                                        fontSize: 58,
+                                        fontFamily: 'WaterLily',
+                                        color: Color(0xFF365B6D)) //,
+                                    ),
                                 SizedBox(height: 8),
                                 Text(
-                                  'Followers', // Replace with the actual number of followers
-                                    style: TextStyle(fontSize: 22,fontFamily: 'WaterLily',color: Color(0xFF365B6D)) //,
-                                ),
+                                    'Followers', // Replace with the actual number of followers
+                                    style: TextStyle(
+                                        fontSize: 22,
+                                        fontFamily: 'WaterLily',
+                                        color: Color(0xFF365B6D)) //,
+                                    ),
                               ],
                             ),
                             SizedBox(width: 16),
@@ -226,20 +241,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 Text(
-                                  '${following}', // Replace with the actual number of following
-                                    style: TextStyle(fontSize: 58,fontFamily: 'WaterLily',color: Color(0xFF365B6D)) //,
-                                ),
+                                    '${following}', // Replace with the actual number of following
+                                    style: TextStyle(
+                                        fontSize: 58,
+                                        fontFamily: 'WaterLily',
+                                        color: Color(0xFF365B6D)) //,
+                                    ),
                                 SizedBox(height: 8),
                                 Text(
-                                  'Following', // Replace with the actual number of following
-                                    style: TextStyle(fontSize: 22,fontFamily: 'WaterLily',color: Color(0xFF365B6D)) //,
+                                    'Following', // Replace with the actual number of following
+                                    style: TextStyle(
+                                        fontSize: 22,
+                                        fontFamily: 'WaterLily',
+                                        color: Color(0xFF365B6D)) //,
 
-                                ),
+                                    ),
                               ],
                             ),
                           ],
                         ),
-
                       ],
                     ),
                   ),
@@ -250,17 +270,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       children: [
                         Text(
                           '${userData['username']}',
-                          style: TextStyle(fontSize: 38,fontFamily: 'cavet',fontWeight: FontWeight.bold,color: Color(0xFF365B6D)),
+                          style: TextStyle(
+                              fontSize: 38,
+                              fontFamily: 'cavet',
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF365B6D)),
                         ),
                         SizedBox(height: 8),
                         Text(
-                        '${userData['name']}', // Replace with the actual name
-                          style: TextStyle(fontSize: 38,fontFamily: 'WaterLily',color: Color(0xFF365B6D)) //,
-                        ),
+                            '${userData['name']}', // Replace with the actual name
+                            style: TextStyle(
+                                fontSize: 38,
+                                fontFamily: 'WaterLily',
+                                color: Color(0xFF365B6D)) //,
+                            ),
                         SizedBox(height: 8),
                         Text(
-                          '${userData['bio']}'+'ok', // Replace with the actual bio
-                          style: TextStyle(fontSize: 25,fontFamily: 'cavet',fontWeight: FontWeight.bold,color: Color(0xFF365B6D)),
+                          '${userData['bio']}' +
+                              'ok', // Replace with the actual bio
+                          style: TextStyle(
+                              fontSize: 25,
+                              fontFamily: 'cavet',
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF365B6D)),
                         ),
                         SizedBox(height: 16),
                         // Row(
@@ -311,83 +343,151 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         //   ],
                         // ),
                         Row(
-                          mainAxisAlignment:
-                          MainAxisAlignment.spaceEvenly,
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             FirebaseAuth.instance.currentUser!.uid == widget.uid
-                                ?
-                            CustomButton(
-                              text: 'Sign Out',
-
-                              onPress: () async {
-                                await AuthMethods().signOut();
-                                if (context.mounted) {
-                                  Navigator.of(context)
-                                      .pushReplacement(
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                      const LoginPage(),
-                                    ),
-                                  );
-                                }
-                              },
-                            ).box.width(context.screenWidth*.9).make(): isFollowing
-                                ?
+                                ? CustomButton(
+                                    text: 'Sign Out',
+                                    onPress: () async {
+                                      await AuthMethods().signOut();
+                                      if (context.mounted) {
+                                        Navigator.of(context).pushReplacement(
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                const LoginPage(),
+                                          ),
+                                        );
+                                      }
+                                    },
+                                  ).box.width(context.screenWidth * .9).make()
+                                : isInMyRequests?
                             Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              mainAxisAlignment:
+                              MainAxisAlignment.spaceEvenly,
                               children: [
                                 CustomButton(
-                                  text: 'Unfollow',
-
+                                  text: 'Accept',
                                   onPress: () async {
                                     await FireStoreMethods()
-                                        .followUser(
-                                      FirebaseAuth.instance
-                                          .currentUser!.uid,
+                                        .acceptUser(
+                                      FirebaseAuth
+                                          .instance.currentUser!.uid,
                                       userData['uid'],
                                     );
 
                                     setState(() {
-                                      isFollowing = false;
-                                      followers--;
+                                      isInMyRequests=false;
+                                      isIFollow=true;
+                                      following++;
                                     });
                                   },
-                                ).box.width(context.screenWidth*.4).make(),
+                                )
+                                    .box
+                                    .width(context.screenWidth * .4)
+                                    .make(),
                                 CustomButton(
-                                  text: 'Message',
+                                  text: 'Decline',
+                                  onPress: () async {
+                                    await FireStoreMethods()
+                                        .deleteUserRequest(
+                                      FirebaseAuth
+                                          .instance.currentUser!.uid,
+                                      userData['uid'],
+                                    );
 
-                                  onPress: () {
-                                    startChat();
-
+                                    setState(() {
+                                      isInMyRequests=false;
+                                    });
                                   },
-                                ).box.width(context.screenWidth*.4).make(),
+                                )
+                                    .box
+                                    .width(context.screenWidth * .4)
+                                    .make(),
                               ],
-                            ).box.width(context.screenWidth*.9).make()
+                            )
                                 :
+                            isRequested?
                             CustomButton(
-                              text: 'Follow',
+                    text: 'Requested',
+                    onPress: () async {
+                      await FireStoreMethods().followRequest(
+                        FirebaseAuth
+                            .instance.currentUser!.uid,
+                        userData['uid'],
+                      );
 
-                              onPress: () async {
-                                await FireStoreMethods()
-                                    .followUser(
-                                  FirebaseAuth.instance
-                                      .currentUser!.uid,
-                                  userData['uid'],
-                                );
+                      setState(() {
+                        isRequested=false;
+                        // isFollowing = true;
+                        // followers++;
+                      });
+                    },
+                  )
+                      .box
+                      .width(context.screenWidth * .9)
+                      .make():
+                            isIFollow
+                                    ?
+                            Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceEvenly,
+                                        children: [
+                                          CustomButton(
+                                            text: 'Unfollow',
+                                            onPress: () async {
+                                              await FireStoreMethods()
+                                                  .unfollowUser(
+                                                FirebaseAuth
+                                                    .instance.currentUser!.uid,
+                                                userData['uid'],
+                                              );
 
-                                setState(() {
-                                  isFollowing = true;
-                                  followers++;
-                                });
-                              },
-                            ).box.width(context.screenWidth*.9).make(),
+                                              setState(() {
+                                                isIFollow = false;
+                                                following--;
+                                              });
+                                            },
+                                          )
+                                              .box
+                                              .width(context.screenWidth * .4)
+                                              .make(),
+                                          CustomButton(
+                                            text: 'Message',
+                                            onPress: () {
+                                              startChat();
+                                            },
+                                          )
+                                              .box
+                                              .width(context.screenWidth * .4)
+                                              .make(),
+                                        ],
+                                      )
+                                        .box
+                                        .width(context.screenWidth * .9)
+                                        .make()
+                                    : CustomButton(
+                                        text: 'Follow',
+                                        onPress: () async {
+                                          await FireStoreMethods().followRequest(
+                                            FirebaseAuth
+                                                .instance.currentUser!.uid,
+                                            userData['uid'],
+                                          );
+
+                                          setState(() {
+                                            isRequested=true;
+                                            // isFollowing = true;
+                                            // followers++;
+                                          });
+                                        },
+                                      )
+                                        .box
+                                        .width(context.screenWidth * .9)
+                                        .make(),
                           ],
                         ),
 
                         SizedBox(height: 16),
-
-
-
                       ],
                     ),
                   ),
