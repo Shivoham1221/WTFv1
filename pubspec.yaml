@@ -85,6 +85,20 @@ flutter:
     - assets/latestGamesImages/
     - assets/updatesImages/
     - assets/icons/
+
+
+    
+    - assets/image/loginLogo.png
+    - assets/image/postImage1.png
+    - assets/image/postIcon.png
+    - assets/image/registerLogo.png
+    - assets/image/storyImages/storyImage1.png
+    - assets/image/storyImages/storyImage2.png
+    #    - assets/image/storyImages/storyImage2.png
+    - assets/image/storyImages/storyImage3.png
+    - assets/latestGamesImages/
+    - assets/updatesImages/
+    - assets/icons/
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
