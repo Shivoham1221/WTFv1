@@ -34,7 +34,7 @@ class MainScreen extends StatelessWidget {
       BottomNavigationBarItem(icon: Icon(Icons.person_2_outlined),label: "Profile"),
     ];
     var navBody=[
-      const HomeScreen(),MessageScreen(), ExploreScreen(),NotificationPage(),ProfileScreen(uid:FirebaseAuth.instance.currentUser!.uid)
+      const HomeScreen1(),MessageScreen(), ExploreScreen(),NotificationPage(),ProfileScreen(uid:FirebaseAuth.instance.currentUser!.uid)
 
     ];
     return Scaffold(
