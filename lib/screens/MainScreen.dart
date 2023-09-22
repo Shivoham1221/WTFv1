@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:velocity_x/velocity_x.dart';
-import 'package:wtf01/Poll.dart';
+// import 'package:wtf01/Poll.dart';
 import 'package:wtf01/HomeScreen1.dart';
 import 'package:wtf01/Message.dart';
 import 'package:wtf01/Notification.dart';

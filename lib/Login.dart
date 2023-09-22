@@ -5,6 +5,7 @@ import 'package:wtf01/resources/auth_methods.dart';
 import 'package:wtf01/screens/MainScreen.dart';
 import 'package:wtf01/utils/utils.dart';
 import 'Register.dart'; // Import the register screen file
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -31,14 +32,19 @@ class _LoginPageState extends State<LoginPage> {
       _isLoading = true;
     });
     String res = await AuthMethods().loginUser(
-        email: _emailController.text, password: _passwordController.text);
+      email: _emailController.text,
+      password: _passwordController.text,
+    );
     if (res == 'success') {
+      // Save authentication information in shared_preferences
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setBool('isLoggedIn', true);
+
       if (context.mounted) {
         Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(
-              builder: (context) =>MainScreen()
-            ),
-                (route) => false);
+          MaterialPageRoute(builder: (context) => MainScreen()),
+              (route) => false,
+        );
 
         setState(() {
           _isLoading = false;
@@ -51,6 +57,25 @@ class _LoginPageState extends State<LoginPage> {
       if (context.mounted) {
         showSnackBar(context, res);
       }
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    checkLoginStatus();
+  }
+
+  void checkLoginStatus() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+
+    if (isLoggedIn) {
+      // If the user is already logged in, navigate to the main screen
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => MainScreen()),
+            (route) => false,
+      );
     }
   }
 

@@ -144,20 +144,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   uploadImage() async {
-    String photoUrl = await StorageMethods()
-        .uploadImageToStorage('profilePics', _image!, false);
-    await FirebaseFirestore.instance
-        .collection("users")
-        .doc(_auth.currentUser!.uid)
-        .update({"photoUrl": '${photoUrl}'}).then((_) {
-      print('Username updated successfully');
-    }).catchError((error) {
-      print('Error updating username: $error');
-    });
-    setState(() {
-      profileImage = photoUrl;
-    });
+    try {
+      // Upload the image to Firebase Storage and get the download URL
+      String photoUrl = await StorageMethods()
+          .uploadImageToStorage('profilePics', _image!, false);
+
+      // Update the user's document in Firestore with the new photo URL
+      await FirebaseFirestore.instance
+          .collection("users")
+          .doc(widget.uid) // Use the user's UID as the document ID
+          .update({"photoUrl": photoUrl}).then((_) {
+        print('Profile picture updated successfully');
+      }).catchError((error) {
+        print('Error updating profile picture: $error');
+      });
+
+      // Update the profileImage variable in the current state
+      setState(() {
+        profileImage = photoUrl;
+      });
+    } catch (e) {
+      print('Error uploading profile picture: $e');
+    }
   }
+
 
   selectImage() async {
     Uint8List im = await pickImage(ImageSource.gallery);

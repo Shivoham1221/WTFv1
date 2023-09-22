@@ -6,7 +6,7 @@ import 'package:wtf01/Profile.dart';
 import 'package:wtf01/screens/MainScreen.dart';
 import 'package:wtf01/screens/SplashScreen.dart';
 import 'dart:async';
-import 'HomeScreen.dart';
+// import 'HomeScreen.dart';
 import 'Login.dart';
 import 'Register.dart';
 import 'Message.dart';

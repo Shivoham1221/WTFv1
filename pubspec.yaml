@@ -45,6 +45,10 @@ dependencies:
   velocity_x: ^4.0.0
   get: ^4.3.8
   random_string: ^2.0.1
+  shared_preferences: ^2.0.6
+
+  fluttertoast: any
+
 
 
 

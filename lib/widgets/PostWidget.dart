@@ -124,7 +124,7 @@ class PostWidget extends StatelessWidget {
                         Row(
                           children: [
                             Text(
-                              commentUsername, // Use the comment username here
+                              username, // Use the main username here
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16,
@@ -148,6 +148,7 @@ class PostWidget extends StatelessWidget {
                             ),
                           ],
                         ),
+
                         Icon(
                           Icons.favorite_border,
                           color: Colors.black,
@@ -163,12 +164,6 @@ class PostWidget extends StatelessWidget {
             ],
           ),
 
-
-
-
-
-
-
           SizedBox(height: 16),
           Text(
             "Show all $commentCount comments",
@@ -179,4 +174,3 @@ class PostWidget extends StatelessWidget {
     );
   }
 }
-//
